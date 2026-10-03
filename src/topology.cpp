@@ -4,6 +4,8 @@
 #include <functional>
 #include <queue>
 
+using namespace std;
+
 void Topology::add_link(int a, int b, int w) {
     adj_[a][b] = w;
     adj_[b][a] = w;
@@ -21,12 +23,12 @@ bool Topology::has_link(int a, int b) const {
     return it != adj_.end() && it->second.count(b) > 0;
 }
 
-std::vector<int> Topology::shortest_path(int src, int dst) const {
+vector<int> Topology::shortest_path(int src, int dst) const {
     if (!adj_.count(src) || !adj_.count(dst)) return {};
 
-    using QE = std::pair<int, int>;  // (distance, node)
-    std::priority_queue<QE, std::vector<QE>, std::greater<QE>> pq;
-    std::map<int, int> dist, prev;
+    using QE = pair<int, int>;  // (distance, node)
+    priority_queue<QE, vector<QE>, greater<QE>> pq;
+    map<int, int> dist, prev;
 
     dist[src] = 0;
     pq.push({0, src});
@@ -47,9 +49,9 @@ std::vector<int> Topology::shortest_path(int src, int dst) const {
     }
 
     if (!dist.count(dst)) return {};
-    std::vector<int> path;
+    vector<int> path;
     for (int v = dst; v != src; v = prev[v]) path.push_back(v);
     path.push_back(src);
-    std::reverse(path.begin(), path.end());
+    reverse(path.begin(), path.end());
     return path;
 }

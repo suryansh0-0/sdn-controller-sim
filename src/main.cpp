@@ -18,14 +18,16 @@
 #include "network.hpp"
 #include "sdn_switch.hpp"
 
-static void settle() { std::this_thread::sleep_for(std::chrono::milliseconds(300)); }
-static void step(const std::string& s) { sim_log("demo", "\n=== " + s + " ==="); }
+using namespace std;
+
+static void settle() { this_thread::sleep_for(chrono::milliseconds(300)); }
+static void step(const string& s) { sim_log("demo", "\n=== " + s + " ==="); }
 
 int main() {
     signal(SIGPIPE, SIG_IGN);
 
     struct Edge { int a, b, w; };
-    const std::vector<Edge> edges = {{1, 2, 1}, {2, 3, 1}, {1, 4, 2}, {4, 5, 2}, {5, 3, 2}};
+    const vector<Edge> edges = {{1, 2, 1}, {2, 3, 1}, {1, 4, 2}, {4, 5, 2}, {5, 3, 2}};
 
     Topology topo;
     Network net;
@@ -35,13 +37,13 @@ int main() {
     }
 
     Controller ctrl(topo);
-    if (!ctrl.start(0)) { std::cerr << "controller failed to start\n"; return 1; }
+    if (!ctrl.start(0)) { cerr << "controller failed to start\n"; return 1; }
 
-    std::vector<std::unique_ptr<Switch>> sw;  // destroyed before ctrl
+    vector<unique_ptr<Switch>> sw;  // destroyed before ctrl
     for (int id = 1; id <= 5; ++id) {
-        sw.push_back(std::make_unique<Switch>(id, net));
+        sw.push_back(make_unique<Switch>(id, net));
         net.add_switch(sw.back().get());
-        if (!sw.back()->connect(ctrl.port())) { std::cerr << "connect failed\n"; return 1; }
+        if (!sw.back()->connect(ctrl.port())) { cerr << "connect failed\n"; return 1; }
     }
     ctrl.wait_for_switches(5);
 
